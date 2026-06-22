@@ -1,0 +1,9 @@
+version: 1
+bundleID: dev.johnoreilly.peopleinspace.xtool
+kotlin:
+  # Name registered via XCFramework("PeopleInSpaceKit") in common/build.gradle.kts.
+  framework: PeopleInSpaceKit
+  # The Gradle module that owns the shared code.
+  module: common
+  # The Gradle root (./gradlew) lives one level up from this xtool app.
+  projectDir: ..

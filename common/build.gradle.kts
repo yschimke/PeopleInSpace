@@ -3,6 +3,7 @@
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import com.google.devtools.ksp.gradle.KspAATask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -29,6 +30,12 @@ android {
 kotlin {
     jvmToolchain(17)
 
+    // XCFramework registration so `xtool` can assemble the shared module via its
+    // default Gradle task (`assemblePeopleInSpaceKit<Config>XCFramework`) and find
+    // the artifact at the conventional path it expects. This coexists with the
+    // multiplatform-swiftpackage plugin used for the Xcode app. The framework's
+    // Swift module name stays `common` (its baseName), so callers `import common`.
+    val xcf = XCFramework("PeopleInSpaceKit")
     listOf(
         iosX64(),
         iosArm64(),
@@ -36,6 +43,8 @@ kotlin {
     ).forEach {
         it.binaries.framework {
             baseName = "common"
+            isStatic = false // dynamic, so xtool can embed + sign it
+            xcf.add(this)
         }
     }
 
